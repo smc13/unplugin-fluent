@@ -75,7 +75,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "scripts": {
     "build": "tsup",
@@ -90,6 +91,7 @@
   },
   "peerDependencies": {
     "@farmfe/core": ">=1",
+    "@fluent/bundle": "^0.18.0",
     "@nuxt/kit": "^3",
     "@nuxt/schema": "^3",
     "esbuild": "*",
@@ -122,26 +124,25 @@
   },
   "dependencies": {
     "@anchanix/fluent-utils": "^0.1.0-beta.0",
-    "@fluent/bundle": "^0.18.0",
-    "unplugin": "^1.12.2"
+    "tinyglobby": "^0.2.10",
+    "unplugin": "^1.15.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.0.0",
-    "@nuxt/kit": "^3.13.0",
-    "@nuxt/schema": "^3.13.0",
-    "@types/node": "^22.5.1",
-    "bumpp": "^9.5.2",
+    "@antfu/eslint-config": "^3.8.0",
+    "@nuxt/kit": "^3.13.2",
+    "@nuxt/schema": "^3.13.2",
+    "@types/node": "^22.8.6",
+    "bumpp": "^9.8.0",
     "chalk": "^5.3.0",
-    "eslint": "^9.9.1",
-    "esno": "^4.7.0",
+    "eslint": "^9.13.0",
+    "esno": "^4.8.0",
     "fast-glob": "^3.3.2",
-    "nodemon": "^3.1.4",
-    "rollup": "^4.21.2",
-    "tinyglobby": "^0.2.10",
-    "tsup": "^8.2.4",
-    "typescript": "^5.5.4",
-    "vite": "^5.4.2",
-    "vitest": "^2.0.5",
-    "webpack": "^5.94.0"
+    "nodemon": "^3.1.7",
+    "rollup": "^4.24.3",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4",
+    "webpack": "^5.96.0"
   }
 }

@@ -1,8 +1,8 @@
 import { readFileSync, writeFileSync } from 'node:fs'
-import { resolve } from 'node:path'
-import { glob } from 'tinyglobby'
+import { globSync } from 'tinyglobby'
 import { createUnplugin } from 'unplugin'
 import type { UnpluginFactory } from 'unplugin'
+import { createFilter } from 'vite'
 import type { Options, ResolvedOptions } from './types'
 import { formatFtl } from './core/format'
 import { isFluentImport, normaliseFluentPath, resolveImportPath } from './core/loader'
@@ -11,6 +11,7 @@ import { generateTypescriptTypes } from './core/export'
 
 export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) => {
   const resolved = resolveOptions(options)
+  const ftlFilter = createFilter('**/*.ftl')
 
   return {
     name: 'unplugin-fluent',
@@ -34,7 +35,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
         return null
       }
 
-      const files = await glob(config.filesGlob, {})
+      const files = globSync(config.filesGlob, { onlyFiles: true })
       if (!files.length) {
         this.warn(`No files found for glob: ${config.filesGlob}`)
         return null
@@ -49,9 +50,7 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
     },
 
     async watchChange(id: string) {
-      // TODO: improve this using the glob pattern
-      const isFluentFile = id.endsWith('.ftl')
-      if (isFluentFile) {
+      if (ftlFilter(id)) {
         const config = await resolved
         await writeTypesFile(config)
       }
@@ -109,7 +108,7 @@ async function writeTypesFile(config: ResolvedOptions): Promise<void> {
     return
   }
 
-  const files = await glob(config.filesGlob, {})
+  const files = globSync(config.filesGlob, { onlyFiles: true })
   const outputFile = typeof config.writeTypes === 'string' ? config.writeTypes : 'fluent-types.d.ts'
   const output = await generateTypescriptTypes(files, config)
 

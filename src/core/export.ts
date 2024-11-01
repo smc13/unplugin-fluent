@@ -1,4 +1,4 @@
-import { readFile, readFileSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { exportTypescript, mergeParsed, parseContent } from '@anchanix/fluent-utils'
 import type { KeyedParsedPlaceable } from '@anchanix/fluent-utils'
 import type { ResolvedOptions } from '../types'
