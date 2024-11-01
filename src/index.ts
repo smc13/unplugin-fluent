@@ -69,10 +69,10 @@ function buildLangMap(files: string[], config: ResolvedOptions): string {
   }
 
   const mapped = Array.from(langs).map(lang =>
-    `'${lang}': () => import('virtual:fluent/langs/${lang}')`,
+    `['${lang}', () => import('virtual:fluent/langs/${lang}')]`,
   )
 
-  return `export default {\n${mapped.join(',\n')}\n}`
+  return `export default new Map([${mapped.join(', ')}])`
 }
 
 function buildLangBundle(files: string[], lang: string, config: ResolvedOptions): string {

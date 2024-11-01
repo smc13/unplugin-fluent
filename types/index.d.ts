@@ -8,9 +8,8 @@ declare module 'virtual:fluent/langs/*' {
 declare module 'virtual:fluent/langs/all' {
   import type { FluentBundle } from '@fluent/bundle'
 
-  interface FluentLangImporter { [key: string]: () => Promise<{ default: FluentBundle }> }
-  const FluentLangImporter: FluentLangImporter
-  export default FluentLangImporter
+  const FluentLangMap: Map<string, () => Promise<{ default: FluentBundle }>>
+  export default FluentLangMap
 }
 
 declare module '~fluent/langs/*' {
