@@ -121,12 +121,12 @@
     }
   },
   "dependencies": {
+    "@anchanix/fluent-utils": "^0.1.0-beta.0",
+    "@fluent/bundle": "^0.18.0",
     "unplugin": "^1.12.2"
   },
   "devDependencies": {
-    "@anchanix/fluent-utils": "^1.0.0",
     "@antfu/eslint-config": "^3.0.0",
-    "@fluent/bundle": "^0.18.0",
     "@nuxt/kit": "^3.13.0",
     "@nuxt/schema": "^3.13.0",
     "@types/node": "^22.5.1",
