@@ -1,28 +1,12 @@
 # @anchanix/unplugin-fluent
 
-[![NPM version](https://img.shields.io/npm/v/@anchanix/unplugin-fluent?color=a1b858&label=)](https://www.npmjs.com/package/@anchanix/unplugin-fluent)
-
-Starter template for [unplugin](https://github.com/unjs/unplugin).
-
-## Template Usage
-
-To use this template, clone it down using:
-
-```bash
-npx degit unplugin/@anchanix/unplugin-fluent my-unplugin
-```
-
-And do a global replacement of `@anchanix/unplugin-fluent` with your plugin name.
-
-Then you can start developing your unplugin 🔥
-
-To test your plugin, run: `pnpm run dev`
-To release a new version, run: `pnpm run release`
+Plugin for Vite and other bundlers to easily import
+[project fluent](https://projectfluent.org/) bundles.
 
 ## Install
 
 ```bash
-npm i @anchanix/unplugin-fluent
+pnpm add @anchanix/unplugin-fluent
 ```
 
 <details>
@@ -30,11 +14,11 @@ npm i @anchanix/unplugin-fluent
 
 ```ts
 // vite.config.ts
-import Starter from '@anchanix/unplugin-fluent/vite'
+import fluent from '@anchanix/unplugin-fluent/vite'
 
 export default defineConfig({
   plugins: [
-    Starter({ /* options */ }),
+    fluent({ /* options */ }),
   ],
 })
 ```
@@ -48,11 +32,11 @@ Example: [`playground/`](./playground/)
 
 ```ts
 // rollup.config.js
-import Starter from '@anchanix/unplugin-fluent/rollup'
+import fluent from '@anchanix/unplugin-fluent/rollup'
 
 export default {
   plugins: [
-    Starter({ /* options */ }),
+    fluent({ /* options */ }),
   ],
 }
 ```
@@ -112,11 +96,39 @@ module.exports = {
 ```ts
 // esbuild.config.js
 import { build } from 'esbuild'
-import Starter from '@anchanix/unplugin-fluent/esbuild'
+import fluent from '@anchanix/unplugin-fluent/esbuild'
 
 build({
-  plugins: [Starter()],
+  plugins: [fluent()],
 })
 ```
 
 <br></details>
+
+## Usage
+
+### Importing a single language bundle
+```ts
+import enBundle from 'virtual:fluent/langs/en-AU'
+```
+
+### Dynamically loading bundles
+To dynamically load bundles you first have to import the bundle map:
+```ts
+import bundleMap from 'virtual:fluent/langs/all'
+```
+
+and then in a function you can use the map to load a bundle
+
+```ts
+async function switchLang(langCode: string) {
+  if (!bundleMap[langCode]) {
+    throw new Error(`Language not supported: ${langCode}`)
+  }
+
+  const bundleImport = await bundleMap[langCode]
+  const bundle = bundleImport.default
+
+  // start using the bundle
+}
+```
