@@ -123,7 +123,7 @@
     }
   },
   "dependencies": {
-    "@anchanix/fluent-utils": "^0.1.0-beta.0",
+    "@anchanix/fluent-utils": "^0.1.0-beta.1",
     "tinyglobby": "^0.2.10",
     "unplugin": "^1.15.0"
   },
@@ -137,6 +137,7 @@
     "eslint": "^9.13.0",
     "esno": "^4.8.0",
     "fast-glob": "^3.3.2",
+    "magic-string": "^0.30.12",
     "nodemon": "^3.1.7",
     "rollup": "^4.24.3",
     "tsup": "^8.3.5",

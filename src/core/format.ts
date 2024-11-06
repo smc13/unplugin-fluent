@@ -1,7 +1,7 @@
 /**
  * Format FTL content by removing empty lines, comments, etc.
  */
-export function formatFtl(content: string) {
+export function formatFtl(content: string): string {
   // remove empty lines
   content = content.replace(/^\s*[\r\n]/gm, '')
 
