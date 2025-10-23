@@ -58,8 +58,7 @@
       "require": "./dist/farm.cjs"
     },
     "./types": {
-      "import": "./dist/types.js",
-      "require": "./dist/types.cjs"
+      "types": "./types/index.d.ts"
     },
     "./*": "./*"
   },

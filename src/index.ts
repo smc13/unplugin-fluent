@@ -1,5 +1,5 @@
 import type { UnpluginFactory } from 'unplugin'
-import type { Options, ResolvedOptions } from './types'
+import type { Options, ResolvedOptions } from './core/options'
 import { readFileSync, writeFileSync } from 'node:fs'
 import MagicString, { Bundle } from 'magic-string'
 import { globSync } from 'tinyglobby'
@@ -13,6 +13,7 @@ import { resolveOptions } from './core/options'
 export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) => {
   const resolved = resolveOptions(options)
   const ftlFilter = createFilter('**/*.ftl')
+  let files: string[] = []
 
   return {
     name: 'unplugin-fluent',
@@ -21,13 +22,17 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
         return normaliseFluentPath(id)
       }
     },
+
     async buildStart() {
       const config = await resolved
-      writeTypesFile(config)
+      files = globSync(config.filesGlob, { onlyFiles: true, cwd: config.root })
+      writeTypesFile(files, config)
     },
+
     loadInclude(id: string) {
       return isFluentImport(id)
     },
+
     async load(id: string) {
       const config = await resolved
 
@@ -36,7 +41,6 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
         return null
       }
 
-      const files = globSync(config.filesGlob, { onlyFiles: true, cwd: config.root })
       if (!files.length) {
         this.warn(`No files found for glob: ${config.filesGlob}`)
         return null
@@ -53,25 +57,46 @@ export const unpluginFactory: UnpluginFactory<Options | undefined> = (options) =
     async watchChange(id: string) {
       if (ftlFilter(id)) {
         const config = await resolved
-        await writeTypesFile(config)
+        files = globSync(config.filesGlob, { onlyFiles: true, cwd: config.root })
+        await writeTypesFile(files, config)
       }
+    },
+
+    async transform(code, id) {
+      if (!ftlFilter(id)) {
+        return
+      }
+
+      const config = await resolved
+      if (config.format) {
+        code = formatFtl(code)
+      }
+
+      const ms = new MagicString(code, { filename: id })
+      ms.prepend(`import { FluentResource } from '@fluent/bundle'
+        export const resource = new FluentResource(\`
+      `)
+      ms.append(`\`
+        export const language = '${config.languageResolver(id)}'
+      `)
+
+      return { code: ms.toString(), map: ms.generateMap() }
     },
 
     vite: {
       handleHotUpdate: {
+        order: 'post',
         handler: async ({ file, server }) => {
           if (ftlFilter(file)) {
             const config = await resolved
             const lang = config.languageResolver(file)
             const module = server.moduleGraph.getModuleById(`virtual:fluent/langs/${lang}`)
             if (!module) {
-              return []
+              return
             }
 
             return [module]
           }
-
-          return []
         },
       },
     },
@@ -121,12 +146,11 @@ function buildLangBundle(files: string[], lang: string, config: ResolvedOptions)
   return { code: bundle.toString(), map: bundle.generateMap() }
 }
 
-async function writeTypesFile(config: ResolvedOptions): Promise<void> {
+async function writeTypesFile(files: string[], config: ResolvedOptions): Promise<void> {
   if (!config.writeTypes) {
     return
   }
 
-  const files = globSync(config.filesGlob, { onlyFiles: true, cwd: config.root })
   const outputFile = typeof config.writeTypes === 'string' ? config.writeTypes : 'fluent-types.d.ts'
   const output = await generateTypescriptTypes(files, config)
 

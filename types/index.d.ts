@@ -19,6 +19,13 @@ declare module '~fluent/langs/*' {
   export const resources: FluentResource[]
 }
 
+declare module '*.ftl' {
+  import type { FluentResource } from '@fluent/bundle'
+
+  export const language: string
+  export const resources: FluentResource[]
+}
+
 declare module '~fluent/langs/all' {
   import type { FluentResource } from '@fluent/bundle'
 
